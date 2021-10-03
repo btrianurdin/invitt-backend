@@ -1,10 +1,10 @@
-import * as express from "express";
-import * as mongoose from "mongoose";
-import * as cors from "cors";
-import * as cookieParser from "cookie-parser";
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 import apiRuter from "./routes/api";
-import { IDBConnect } from "./interfaces/Database";
 import Config from "./config";
+import { IDBConnect } from "./interfaces/Database";
 
 class App {
   public app: express.Application;

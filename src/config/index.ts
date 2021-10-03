@@ -5,7 +5,11 @@ const Config = {
   baseUrl: process.env.BASE_URL || "http://localhost:5000",
   apiPrefix: process.env.API_PREFIX || "api",
   database: {
-    url: `${process.env.DB_SERVER_URL}` || null,
+    url: `${process.env.DB_SERVER_URL}` || "",
+  },
+  jwt: {
+    access_token_key: process.env.ACCESS_TOKEN_KEY || "test11",
+    refresh_token_key: process.env.REFRESH_TOKEN_KEY || "test11",
   },
   cloudinary: {
     name: process.env.CLOUDINARY_NAME || "default",

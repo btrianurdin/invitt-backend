@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { compare} from 'bcrypt';
 import User, { IUserModel } from "../../models/User";
 import { ErrorResponse } from "../../utils/ErrorResponse";
-import { createAccessToken, createRefreshToken } from "../../utils/jwtToken";
+import { createToken } from "../../utils/jwtToken";
 import { checkValidation } from "../../utils/validation";
 
 export default class AuthController {
@@ -15,22 +15,15 @@ export default class AuthController {
       try {
         const users = new User(req.body as IUserModel);
         const usersSave = await users.save();
-        const access_token = await createAccessToken({
+
+        const token = await createToken({
           _id: usersSave["_id"],
-          email: usersSave.email,
-          fullname: usersSave.fullname
-        });
-        const refresh_token = await createRefreshToken({
-          _id: usersSave["_id"],
-          email: usersSave.email,
-          fullname: usersSave.fullname
         });
 
         res.status(200).json({
           status: "success",
           data: {
-            access_token,
-            refresh_token
+            token,
           },
         });
       } catch(err: any) {
@@ -51,11 +44,21 @@ export default class AuthController {
       const check = await compare(password, user.password);
       if (!check) throw new Error("notfound");
 
-      res.end("mantap");
+      const token = await createToken({
+        _id: user["_id"],
+      });
+
+      res.status(200).json({
+        status: "success",
+        data: {
+          token
+        }
+      })
     } catch(err: any) {
       if (err?.message == "notfound") return ErrorResponse.BAD_REQUEST(res, "email or password is not valid");
       ErrorResponse.INTERNAL_SERVER_ERROR(res, err.message);
     }
   }
+
 }
 

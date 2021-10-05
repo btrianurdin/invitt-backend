@@ -6,10 +6,7 @@ const Config = {
   database: {
     url: `${process.env.DB_SERVER_URL}` || "",
   },
-  jwt: {
-    access_token_key: process.env.ACCESS_TOKEN_KEY || "test11",
-    refresh_token_key: process.env.REFRESH_TOKEN_KEY || "test11",
-  },
+  jwtTokenKey: process.env.ACCESS_TOKEN_KEY || "",
   cloudinary: {
     name: process.env.CLOUDINARY_NAME || "default",
     api_key: process.env.CLOUDINARY_API_KEY || "123",

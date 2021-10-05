@@ -7,7 +7,6 @@ export interface IUserModel extends Document {
   password: string;
   phoneNumber: string; 
   gender: "man" | "women" | "none";
-  refreshToken: string;
 }
 
 const UserSchema: Schema<IUserModel> = new Schema({
@@ -26,7 +25,6 @@ const UserSchema: Schema<IUserModel> = new Schema({
     enum: ["man", "women", "none"],
     default: "none"
   },
-  refreshToken: String,
 }, {timestamps: true});
 
 UserSchema.pre("save", function (next) {

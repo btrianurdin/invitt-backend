@@ -27,7 +27,11 @@ export class ErrorResponse {
   }
 
   static BAD_REQUEST(res: Response, err?: any) {
-    res.status(401).json(this.ERROR_MESSAGE(err || "bad request"));
+    res.status(400).json(this.ERROR_MESSAGE(err || "bad request"));
+  }
+
+  static ACCESS_DENIED(res: Response, err?: any) {
+    res.status(403).json(this.ERROR_MESSAGE(err || "access denied"));
   }
 }
 

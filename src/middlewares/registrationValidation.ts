@@ -1,5 +1,5 @@
-import { checkSchema, body } from "express-validator";
-import User from "../../models/User";
+import { checkSchema } from "express-validator";
+import User from "../models/User";
 
 const registrationValidation = checkSchema({
   fullname: {

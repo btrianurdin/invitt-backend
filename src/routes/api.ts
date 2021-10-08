@@ -4,6 +4,7 @@ import InvitationController from "../controllers/api/InvitationController";
 import AuthController from "../controllers/api/AuthController";
 import authCheck from "../middlewares/authCheck";
 import UserController from "../controllers/api/UserController";
+import updateUser from "../middlewares/updateUser";
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router
 
 router
   .get('/users', authCheck, UserController.show)
-  .put('/users', authCheck, UserController.edit)
+  .put('/users', authCheck, updateUser, UserController.edit)
+  .put('/users/password', authCheck, UserController.editPassword)
 export default router;

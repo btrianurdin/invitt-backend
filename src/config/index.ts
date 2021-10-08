@@ -6,7 +6,7 @@ const Config = {
   database: {
     url: `${process.env.DB_SERVER_URL}` || "",
   },
-  jwtTokenKey: process.env.ACCESS_TOKEN_KEY || "",
+  jwtTokenKey: process.env.JWT_TOKEN || "",
   cloudinary: {
     name: process.env.CLOUDINARY_NAME || "default",
     api_key: process.env.CLOUDINARY_API_KEY || "123",

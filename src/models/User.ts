@@ -27,7 +27,7 @@ const UserSchema: Schema<IUserModel> = new Schema({
   },
 }, {timestamps: true});
 
-UserSchema.pre("save", function (next) {
+UserSchema.pre<IUserModel>("save", function (next) {
   this.password = hashSync(this.password, 10);
   next();
 });

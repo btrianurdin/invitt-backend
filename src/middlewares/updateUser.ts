@@ -1,7 +1,6 @@
 import { checkSchema } from "express-validator";
-import User from "../models/User";
 
-const registrationValidation = checkSchema({
+const updateUser = checkSchema({
   fullname: {
     in: ["body"],
     optional: true,
@@ -13,28 +12,9 @@ const registrationValidation = checkSchema({
       }
     },
   },
-  email: {
-    in: ["body"],
-    isEmail: {
-      errorMessage: "email is not valid"
-    },
-    custom: {
-      errorMessage: "email is already registered",
-      options: async (value: string) => {
-        const countEmail = await User.countDocuments({email: value});
-        if (countEmail > 0) return Promise.reject();
-      }
-    }
-  },
-  password: {
-    in: ["body"],
-    isLength: {
-      errorMessage: "password must be more than 6",
-      options: { min: 6 },
-    },
-  },
   gender: {
     in: ["body"],
+    optional: true,
     custom: {
       errorMessage: "gender is not valid",
       options: (value: string) => {
@@ -46,6 +26,7 @@ const registrationValidation = checkSchema({
   },
   phoneNumber: {
     in: ["body"],
+    optional: true,
     custom: {
       errorMessage: "phone number is not valid",
       options: (value: string) => {
@@ -56,4 +37,4 @@ const registrationValidation = checkSchema({
   }
 });
 
-export default registrationValidation;
+export default updateUser;

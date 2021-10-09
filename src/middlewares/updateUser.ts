@@ -35,15 +35,6 @@ const updateUser = checkSchema({
       }
     }
   },
-  email: {
-    in: ["body"],
-    optional: true,
-    custom: {
-      options: (value: string, { req }) => {
-        return req.body.email = "";
-      }
-    }
-  }
 });
 
 export default updateUser;

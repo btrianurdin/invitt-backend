@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ObjectId } from "mongoose";
 import { IPublicUser, notUpdatedUserDoc } from "../../interfaces";
-import User from "../../models/User";
+import User, { IUserModel } from "../../models/User";
 import { ErrorResponse } from "../../utils/ErrorResponse";
 import { checkValidation } from "../../utils/validation";
 
@@ -31,10 +31,10 @@ export default class UserController {
         return;
       }
 
-      for (const key in userBody) {
-        console.log(key);
-      }
-      
+      delete userBody["password"];
+      delete userBody["status"];
+      delete userBody["email"];
+
       const sessionId: ObjectId = res.locals.users["_id"];
 
       const userUpdate = await User.findByIdAndUpdate(sessionId, userBody,

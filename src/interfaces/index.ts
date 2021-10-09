@@ -9,6 +9,9 @@ export type IPublicUser = {
   fullname?: string;
   gender?: "man" | "women" | "none";
   phoneNumber?: string;
+  password?: string;
+  email?: string;
+  status?: string;
 }
 
 export const notUpdatedUserDoc = [

@@ -1,6 +1,6 @@
 import { checkSchema } from "express-validator";
 
-const registeredInvitation = checkSchema({
+const completedAccount = checkSchema({
   web_url: {
     in: ["body"],
     isSlug: {
@@ -27,4 +27,4 @@ const registeredInvitation = checkSchema({
   }
 });
 
-export default registeredInvitation;
+export default completedAccount;

@@ -5,7 +5,7 @@ import AuthController from "../controllers/api/AuthController";
 import authCheck from "../middlewares/authCheck";
 import UserController from "../controllers/api/UserController";
 import updateUser from "../middlewares/updateUser";
-import registeredInvitation from "../middlewares/RegisteredInvitation";
+import registeredInvitation from "../middlewares/completedAccount";
 
 const router = Router();
 

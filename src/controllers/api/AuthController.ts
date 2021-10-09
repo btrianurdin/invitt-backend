@@ -4,6 +4,7 @@ import User, { IUserModel } from "../../models/User";
 import { ErrorResponse } from "../../utils/ErrorResponse";
 import { createToken } from "../../utils/jwtToken";
 import { checkValidation } from "../../utils/validation";
+import Invitation, { IInvitationModel } from "../../models/Invitation";
 
 export default class AuthController {
   static async register(req: Request, res: Response) {
@@ -13,11 +14,14 @@ export default class AuthController {
         return;
       }
       try {
-        const users = new User(req.body as IUserModel);
-        const usersSave = await users.save();
+        const user = new User({...req.body, status: "incomplete" }  as IUserModel);
+        const userSave = await user.save();
+
+        const invitation = new Invitation({ status: "nonactive", user: userSave["_id"]});
+        await invitation.save();
 
         const token = await createToken({
-          _id: usersSave["_id"],
+          _id: userSave["_id"],
         });
 
         res.status(200).json({

@@ -5,10 +5,12 @@ import AuthController from "../controllers/api/AuthController";
 import authCheck from "../middlewares/authCheck";
 import UserController from "../controllers/api/UserController";
 import updateUser from "../middlewares/updateUser";
+import registeredInvitation from "../middlewares/RegisteredInvitation";
 
 const router = Router();
 
 router
+  .post('/registered/completed', authCheck, registeredInvitation, InvitationController.completedRegistration)
   .post('/invitation', InvitationController.create)
 
 router

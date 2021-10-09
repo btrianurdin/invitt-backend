@@ -34,6 +34,15 @@ const updateUser = checkSchema({
         return false;
       }
     }
+  },
+  email: {
+    in: ["body"],
+    optional: true,
+    custom: {
+      options: (value: string, { req }) => {
+        return req.body.email = "";
+      }
+    }
   }
 });
 

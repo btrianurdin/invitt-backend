@@ -11,6 +11,7 @@ const router = Router();
 
 router
   .post('/registered/completed', authCheck, registeredInvitation, InvitationController.completedRegistration)
+  .get('/invitation', authCheck, InvitationController.show)
   .post('/invitation', InvitationController.create)
 
 router

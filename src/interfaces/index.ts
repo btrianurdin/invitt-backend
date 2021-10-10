@@ -23,4 +23,5 @@ export interface IRegisteredInvitation {
   groom_fullname: string;
   bride_fullname: string;
   template: string;
+  user?: string;
 }

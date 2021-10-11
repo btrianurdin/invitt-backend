@@ -1,7 +1,7 @@
 import Cloudinary from "../services/Cloudinary";
 import Random from "./Random";
 
-const imgUploader = async (_base64: string) => {
+export const imageUpload = async (_base64: string) => {
   try {
     const result = await Cloudinary.uploader.upload(_base64, {
       unique_filename: false,
@@ -16,12 +16,10 @@ const imgUploader = async (_base64: string) => {
   }
 }
 
-const imgRemoved = async (_name: string) => {
+export const imageRemove = async (_name: string) => {
   try {
     const result = await Cloudinary.uploader.destroy(_name);
   } catch (err: any) {
     throw new Error("remove image is failed");
   }
 }
-
-export default imgUploader;

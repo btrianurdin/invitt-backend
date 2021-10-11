@@ -1,5 +1,10 @@
 import { Document, model, Schema } from "mongoose";
 
+export interface IUserPic {
+  public_name: string;
+  url: string;
+}
+
 export interface IInvitationModel extends Document {
   user: Schema.Types.ObjectId;
   web_url: string;
@@ -9,8 +14,8 @@ export interface IInvitationModel extends Document {
   groom_fullname: string;
   bride_fullname: string;
   introduce_title: string;
-  groom_pic: string;
-  bride_pic: string;
+  groom_pic: IUserPic;
+  bride_pic: IUserPic;
   groom_text: string;
   bride_text: string;
   greeting: string;
@@ -33,8 +38,14 @@ const InvitationSchema = new Schema(
     groom_fullname: String,
     bride_fullname: String,
     introduce_title: String,
-    groom_pic: String,
-    bride_pic: String,
+    groom_pic: {
+      public_name: String,
+      url: String,
+    },
+    bride_pic: {
+      public_name: String,
+      url: String,
+    },
     groom_text: String,
     bride_text: String,
     greeting: String,

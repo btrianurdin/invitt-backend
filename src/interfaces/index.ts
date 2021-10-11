@@ -25,3 +25,10 @@ export interface IRegisteredInvitation {
   template: string;
   user?: string;
 }
+
+export interface IinvitationImg {
+  field: string;
+  content: string;
+}
+
+export const PictureInvitationKey = ["bride", "groom"];

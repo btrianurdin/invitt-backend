@@ -136,7 +136,7 @@ export default class InvitationController {
       }
 
       try{
-        const remove = await imageRemove((invitationData as any)![`${field}_pic`]['public_name']);
+        await imageRemove((invitationData as any)![`${field}_pic`]['public_name']);
         await Invitation.findOneAndUpdate({user: sessionId}, 
           {
             $unset: {

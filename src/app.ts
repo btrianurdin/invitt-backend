@@ -24,11 +24,7 @@ class App {
   }
 
   public async listen() {
-    process.once('SIGUSR2', function () {
-      process.kill(process.pid, 'SIGUSR2');
-    });
-    
-    process.on('SIGINT', function () {
+    process.on('SIGTERM', function () {
       // this is only called on ctrl+c, not restart
       process.kill(process.pid, 'SIGINT');
     });

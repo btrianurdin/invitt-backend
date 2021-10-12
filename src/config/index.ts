@@ -12,6 +12,7 @@ const Config = {
     api_key: process.env.CLOUDINARY_API_KEY || "123",
     api_secret: process.env.CLOUDINARY_API_SECRET || "123",
   },
+  maxImageSize: process.env.MAX_IMAGE_SIZE || 5000,
 };
 
 export default Config;

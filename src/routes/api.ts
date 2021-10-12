@@ -8,6 +8,7 @@ import updateUser from "../middlewares/updateUser";
 import registeredInvitation from "../middlewares/completedAccount";
 import { body } from "express-validator";
 import { PictureInvitationKey } from "../interfaces";
+import Config from "../config";
 
 const router = Router();
 
@@ -19,6 +20,12 @@ router
     '/invitation/picture', 
     authCheck, 
     body('content').custom((value: string) => {
+      const base64decode = Buffer.byteLength(value.split('base64,')[1], 'base64');
+      console.log((base64decode / 1000));
+      
+      if ((base64decode / 1000) > Config.maxImageSize) {
+        return Promise.reject(`maximum content size is ${Config.maxImageSize}KB`);
+      }
       if(value === undefined || value?.trim()?.length < 1) return Promise.reject("content is empty");
       return Promise.resolve();
     }), 

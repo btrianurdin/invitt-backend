@@ -9,6 +9,7 @@ import registeredInvitation from "../middlewares/completedAccount";
 import { body } from "express-validator";
 import { PictureInvitationKey } from "../interfaces";
 import Config from "../config";
+import WeddingDateController from "../controllers/api/WeddingDateController";
 
 const router = Router();
 
@@ -37,6 +38,7 @@ router
   .delete("/invitation/picture", authCheck, InvitationController.imagesDelete)
   .put("/invitation", authCheck, InvitationController.update)
   .put("/invitation/active", authCheck, InvitationController.status)
+  .post("/invitation/wedding_date", authCheck, WeddingDateController.create)
 
 router
   .post("/auth/register", registrationValidation, AuthController.register)

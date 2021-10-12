@@ -1,5 +1,6 @@
 import { JwtPayload } from "jsonwebtoken";
-import { ObjectId } from "mongoose";
+import { ObjectId, Schema } from "mongoose";
+import { IUserPic } from "../models/Invitation";
 
 export interface IJwtPayload extends JwtPayload{
   _id: ObjectId;
@@ -30,5 +31,9 @@ export interface IinvitationImg {
   field: string;
   content: string;
 }
+
+export const InvitationBlockUpdate = [
+  "user", "groom_pic", "bride_pic", "status", "active_at", "expired_at"
+]
 
 export const PictureInvitationKey = ["bride", "groom"];

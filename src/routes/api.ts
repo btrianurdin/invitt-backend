@@ -15,7 +15,6 @@ const router = Router();
 router
   .post('/registered/completed', authCheck, registeredInvitation, InvitationController.completedRegistration)
   .get('/invitation', authCheck, InvitationController.show)
-  .post('/invitation', InvitationController.create)
   .put(
     '/invitation/picture', 
     authCheck, 
@@ -36,6 +35,7 @@ router
     InvitationController.images
   )
   .delete("/invitation/picture", authCheck, InvitationController.imagesDelete)
+  .put("/invitation", authCheck, InvitationController.update)
 
 router
   .post("/auth/register", registrationValidation, AuthController.register)

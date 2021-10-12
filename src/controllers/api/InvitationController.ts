@@ -2,7 +2,12 @@ import { Request, Response } from "express";
 import { ErrorResponse } from "../../utils/ErrorResponse";
 import Invitation, { IInvitationModel, IUserPic } from "../../models/Invitation";
 import {imageRemove, imageUpload} from "../../utils/imgUploader";
-import { IinvitationImg, IRegisteredInvitation, PictureInvitationKey } from "../../interfaces";
+import { 
+  IinvitationImg, 
+  InvitationBlockUpdate, 
+  IRegisteredInvitation, 
+  PictureInvitationKey 
+} from "../../interfaces";
 import { checkValidation } from "../../utils/validation";
 import { ObjectId } from "mongoose";
 import User from "../../models/User";
@@ -55,24 +60,34 @@ export default class InvitationController {
         status: "success",
         data: invitation,
       });
-    } catch(err) {
-      ErrorResponse.INTERNAL_SERVER_ERROR;
+    } catch(err: any) {
+      ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
     }
   }
 
-  static async create(req: Request, res: Response) {
-    // try{
-    //   const invitation = req.body as IInvitationModel;
+  static async update(req: Request, res: Response) {
+    try{
+      if (res.locals.users["status"] === "incomplete") {
+        return ErrorResponse.ACCESS_DENIED(res, "user status is not complete yet")
+      }
 
-    //   const testupload = await imgUploader(invitation.groom_pic);
+      const updateData = req.body;
 
-    //   res.status(200).json({
-    //     status: "success",
-    //     message: testupload,
-    //   });
-    // } catch(err) {
-    //   ErrorResponse.INTERNAL_SERVER_ERROR;
-    // }
+      InvitationBlockUpdate.forEach(key => {
+        delete updateData![key];
+      })
+
+      const sessionId: ObjectId = res.locals.users["_id"];
+
+      const invitation = await Invitation.findOneAndUpdate({user: sessionId}, updateData, {new: true});
+
+      res.status(200).json({
+        status: "success",
+        data: invitation,
+      });
+    } catch(err: any) {
+      ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
+    }
   }
 
   static async images(req: Request, res: Response) {

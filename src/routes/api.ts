@@ -36,6 +36,7 @@ router
   )
   .delete("/invitation/picture", authCheck, InvitationController.imagesDelete)
   .put("/invitation", authCheck, InvitationController.update)
+  .put("/invitation/active", authCheck, InvitationController.status)
 
 router
   .post("/auth/register", registrationValidation, AuthController.register)

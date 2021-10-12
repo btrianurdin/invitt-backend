@@ -13,6 +13,8 @@ const Config = {
     api_secret: process.env.CLOUDINARY_API_SECRET || "123",
   },
   maxImageSize: process.env.MAX_IMAGE_SIZE || 5000,
+  invitationExpiredTime: Number(process.env.INVITATION_EXPIRED_TIME) || 1,
+  timeZone: process.env.TIME_ZONE || 'Asia/Jakarta',
 };
 
 export default Config;

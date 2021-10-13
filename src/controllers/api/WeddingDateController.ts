@@ -64,4 +64,29 @@ export default class WeddingDateController {
       ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
     }
   }
+
+  static async delete(req: Request, res: Response) {
+    try {
+       const {id} = req.body as {id: ObjectId};
+
+       if (!id) return ErrorResponse.BAD_REQUEST(res, "id is empty");
+
+       const sessionId = res.locals.users["_id"];
+       const invitation = await Invitation.findOne({user: sessionId}).select("_id");
+
+      try {
+        await WeddingDate.findOneAndDelete({_id: id, invitation: invitation!["_id"]});
+
+        res.status(200).json({
+          status: "success",
+          data: {}
+        })
+        
+      } catch (err) {
+        ErrorResponse.INTERNAL_SERVER_ERROR(res, "failed to delete or id is not found");
+      }
+    } catch(err: any) {
+      ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
+    }
+  }
 }

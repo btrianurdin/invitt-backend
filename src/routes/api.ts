@@ -41,6 +41,7 @@ router
   .post("/invitation/wedding_date", authCheck, WeddingDateController.create)
   .put("/invitation/wedding_date", authCheck, WeddingDateController.update)
   .delete("/invitation/wedding_date", authCheck, WeddingDateController.delete)
+  .get("/invitation/wedding_date", authCheck, WeddingDateController.all)
 
 router
   .post("/auth/register", registrationValidation, AuthController.register)

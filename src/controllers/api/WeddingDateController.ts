@@ -7,6 +7,22 @@ import WeddingDate from "../../models/WeddingDate";
 import { ErrorResponse } from "../../utils/ErrorResponse";
 
 export default class WeddingDateController {
+  static async all(req: Request, res: Response) {
+    try {
+      const sessionId = res.locals.users["_id"];
+      const invitation = await Invitation.findOne({user: sessionId}).select("_id");
+
+      const weddingdate = await WeddingDate.find({invitation: invitation!["_id"]});
+
+      res.status(200).json({
+        status: "success",
+        data: weddingdate
+      })
+    } catch(err: any) {
+      ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
+    }
+  }
+
   static async create(req: Request, res: Response) {
     try {
       const reqData = req.body;

@@ -39,6 +39,7 @@ router
   .put("/invitation", authCheck, InvitationController.update)
   .put("/invitation/active", authCheck, InvitationController.status)
   .post("/invitation/wedding_date", authCheck, WeddingDateController.create)
+  .put("/invitation/wedding_date", authCheck, WeddingDateController.update)
 
 router
   .post("/auth/register", registrationValidation, AuthController.register)

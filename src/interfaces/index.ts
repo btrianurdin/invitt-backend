@@ -32,6 +32,17 @@ export interface IinvitationImg {
   content: string;
 }
 
+export interface IWeddingDateUpdate {
+  id: Schema.Types.ObjectId;
+  invitation?: Schema.Types.ObjectId;
+  place_name?: string;
+  date?: Date;
+  location?: String;
+  longitude?: String;
+  latitude?: String;
+  map_link?: String;
+}
+
 export const InvitationBlockUpdate = [
   "user", "groom_pic", "bride_pic", "status", "active_at", "expired_at"
 ]

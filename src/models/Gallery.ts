@@ -2,8 +2,8 @@ import { Document, model, Schema } from "mongoose";
 
 export interface IGalleryModel extends Document {
   invitation: Schema.Types.ObjectId;
-  img_url: string;
-  filename: string;
+  public_name: string;
+  url: string;
 }
 
 const GallerySchema = new Schema(
@@ -12,9 +12,8 @@ const GallerySchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Invitation",
     },
-    img_url: String,
-    filename: String,
-    guest_name: String,
+    public_name: String,
+    url: String,
   },
   { timestamps: true }
 );

@@ -9,6 +9,7 @@ import registeredInvitation from "../middlewares/validations/completedAccount";
 import { body } from "express-validator";
 import WeddingDateController from "../controllers/api/WeddingDateController";
 import { uploadContent, uploadPictureField } from "../middlewares/validations/imageUpload";
+import GalleryController from "../controllers/api/GalleryController";
 
 const router = Router();
 
@@ -25,10 +26,11 @@ router
   )
   .delete("/invitations/picture", authCheck, InvitationController.imagesDelete)
   .put("/invitations/active", authCheck, InvitationController.status)
-  .post("/invitations/wedding_date", authCheck, WeddingDateController.create)
-  .put("/invitations/wedding_date", authCheck, WeddingDateController.update)
-  .delete("/invitations/wedding_date", authCheck, WeddingDateController.delete)
-  .get("/invitations/wedding_date", authCheck, WeddingDateController.all)
+  .post("/invitations/wedding_dates", authCheck, WeddingDateController.create)
+  .put("/invitations/wedding_dates", authCheck, WeddingDateController.update)
+  .delete("/invitations/wedding_dates", authCheck, WeddingDateController.delete)
+  .get("/invitations/wedding_dates", authCheck, WeddingDateController.all)
+  .post("/invitations/galleries", authCheck, body('content').custom(uploadContent), GalleryController.create)
 
 router
   .post("/auth/register", registrationValidation, AuthController.register)
@@ -38,5 +40,5 @@ router
   .get('/users', authCheck, UserController.show)
   .put('/users', authCheck, updateUser, UserController.edit)
   .put('/users/password', authCheck, UserController.editPassword)
-  
+
 export default router;

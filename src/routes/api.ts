@@ -14,10 +14,11 @@ import WeddingDateController from "../controllers/api/WeddingDateController";
 const router = Router();
 
 router
-  .post('/registered/completed', authCheck, registeredInvitation, InvitationController.completedRegistration)
-  .get('/invitation', authCheck, InvitationController.show)
+  .post('/register/completed', authCheck, registeredInvitation, InvitationController.completedRegistration)
+  .get('/invitations', authCheck, InvitationController.show)
+  .put("/invitations", authCheck, InvitationController.update)
   .put(
-    '/invitation/picture', 
+    '/invitations/picture', 
     authCheck, 
     body('content').custom((value: string) => {
       const base64decode = Buffer.byteLength(value.split('base64,')[1], 'base64');
@@ -35,13 +36,12 @@ router
     }), 
     InvitationController.images
   )
-  .delete("/invitation/picture", authCheck, InvitationController.imagesDelete)
-  .put("/invitation", authCheck, InvitationController.update)
-  .put("/invitation/active", authCheck, InvitationController.status)
-  .post("/invitation/wedding_date", authCheck, WeddingDateController.create)
-  .put("/invitation/wedding_date", authCheck, WeddingDateController.update)
-  .delete("/invitation/wedding_date", authCheck, WeddingDateController.delete)
-  .get("/invitation/wedding_date", authCheck, WeddingDateController.all)
+  .delete("/invitations/picture", authCheck, InvitationController.imagesDelete)
+  .put("/invitations/active", authCheck, InvitationController.status)
+  .post("/invitations/wedding_date", authCheck, WeddingDateController.create)
+  .put("/invitations/wedding_date", authCheck, WeddingDateController.update)
+  .delete("/invitations/wedding_date", authCheck, WeddingDateController.delete)
+  .get("/invitations/wedding_date", authCheck, WeddingDateController.all)
 
 router
   .post("/auth/register", registrationValidation, AuthController.register)

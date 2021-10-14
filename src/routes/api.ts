@@ -7,8 +7,6 @@ import UserController from "../controllers/api/UserController";
 import updateUser from "../middlewares/validations/updateUser";
 import registeredInvitation from "../middlewares/validations/completedAccount";
 import { body } from "express-validator";
-import { PictureInvitationKey } from "../interfaces";
-import Config from "../config";
 import WeddingDateController from "../controllers/api/WeddingDateController";
 import { uploadContent, uploadPictureField } from "../middlewares/validations/imageUpload";
 
@@ -40,4 +38,5 @@ router
   .get('/users', authCheck, UserController.show)
   .put('/users', authCheck, updateUser, UserController.edit)
   .put('/users/password', authCheck, UserController.editPassword)
+  
 export default router;

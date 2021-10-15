@@ -46,6 +46,22 @@ export default class GalleryController {
     }
   }
 
+  static async all(req: Request, res: Response) {
+    try {
+      const sessionId = res.locals.users["_id"];
+      const invitation = await Invitation.findOne({user: sessionId}).select("_id");
+
+      const gallery = await Gallery.find({invitation: invitation!["_id"]});
+
+      res.status(200).json({
+        status: "success",
+        data: gallery
+      })
+    } catch(err: any) {
+      ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
+    }
+  }
+
   static async delete(req: Request, res: Response) {
     try {
       const { id } = req.body as {id: ObjectId};

@@ -32,6 +32,7 @@ router
   .get("/invitations/wedding_dates", authCheck, WeddingDateController.all)
   .post("/invitations/galleries", authCheck, body('content').custom(uploadContent), GalleryController.create)
   .delete("/invitations/galleries", authCheck, GalleryController.delete)
+  .get("/invitations/galleries", authCheck, GalleryController.all)
 
 router
   .post("/auth/register", registrationValidation, AuthController.register)

@@ -10,6 +10,7 @@ import { body } from "express-validator";
 import WeddingDateController from "../controllers/api/WeddingDateController";
 import { uploadContent, uploadPictureField } from "../middlewares/validations/imageUpload";
 import GalleryController from "../controllers/api/GalleryController";
+import GuestbookController from "../controllers/api/GuestbookController";
 
 const router = Router();
 
@@ -32,7 +33,16 @@ router
   .get("/invitations/wedding_dates", authCheck, WeddingDateController.all)
   .post("/invitations/galleries", authCheck, body('content').custom(uploadContent), GalleryController.create)
   .delete("/invitations/galleries", authCheck, GalleryController.delete)
-  .get("/invitations/galleries", authCheck, GalleryController.all)
+  .get("/invitations/galleries", authCheck, GalleryController.all);
+
+router
+  .post(
+    "/guestbooks/:slug", 
+    body("guest_name").notEmpty(),
+    body("attendance").notEmpty(),
+    body("message").notEmpty(),
+    GuestbookController.create
+  )
 
 router
   .post("/auth/register", registrationValidation, AuthController.register)
@@ -41,6 +51,6 @@ router
 router
   .get('/users', authCheck, UserController.show)
   .put('/users', authCheck, updateUser, UserController.edit)
-  .put('/users/password', authCheck, UserController.editPassword)
+  .put('/users/password', authCheck, UserController.editPassword);
 
 export default router;

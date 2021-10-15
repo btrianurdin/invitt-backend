@@ -43,6 +43,13 @@ export interface IWeddingDateUpdate {
   map_link?: String;
 }
 
+export interface IGuestBookCreate {
+  invitation?: Schema.Types.ObjectId;
+  guest_name: string;
+  attendance: "Y" | "N";
+  message: string;
+}
+
 export const InvitationBlockUpdate = [
   "user", "groom_pic", "bride_pic", "status", "active_at", "expired_at"
 ]

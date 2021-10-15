@@ -30,4 +30,23 @@ export default class GuestbookController {
       ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
     }
   }
+
+  static async all(req: Request, res: Response) {
+    try {
+      const { slug } = req.params;
+
+      const invitation = await Invitation.findOne({web_url: slug});
+      if (!invitation) throw new Error("slug not found");
+
+      const guestbook = await Guestbook.find({invitation: invitation["_id"]});
+
+      res.status(200).json({
+        status: "success",
+        data: guestbook,
+      });
+
+    } catch(err: any) {
+      ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
+    }
+  }
 }

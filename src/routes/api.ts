@@ -43,6 +43,7 @@ router
     body("message").notEmpty(),
     GuestbookController.create
   )
+  .get("/guestbooks/:slug", GuestbookController.all)
 
 router
   .post("/auth/register", registrationValidation, AuthController.register)

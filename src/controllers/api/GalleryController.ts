@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
+import { ObjectId } from "mongoose";
 import Gallery from "../../models/Gallery";
 import Invitation from "../../models/Invitation";
 import { ErrorResponse } from "../../utils/ErrorResponse";
-import { imageUpload } from "../../utils/imgUploader";
+import { imageRemove, imageUpload } from "../../utils/imgUploader";
 import { checkValidation } from "../../utils/validation";
 
 export default class GalleryController {
@@ -39,6 +40,35 @@ export default class GalleryController {
 
       } catch(err: any) {
         throw new Error(err?.message)
+      }
+    } catch(err: any) {
+      ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
+    }
+  }
+
+  static async delete(req: Request, res: Response) {
+    try {
+      const { id } = req.body as {id: ObjectId};
+
+      if (!id) return ErrorResponse.BAD_REQUEST(res, "id is empty");
+
+      const sessionId = res.locals.users["_id"];
+      const invitation = await Invitation.findOne({user: sessionId}).select("_id");
+      
+      const gallery = await Gallery.findOne({_id: id, invitation: invitation!["_id"]});
+      if (!gallery) return ErrorResponse.BAD_REQUEST(res, "id not found");
+
+      try {
+        await Gallery.findOneAndDelete({_id: id});
+        await imageRemove((gallery as any)["public_name"]);
+
+        res.status(200).json({
+          status: "success",
+          data: {}
+        })
+        
+      } catch (err) {
+        throw new Error("failed to delete")
       }
     } catch(err: any) {
       ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);

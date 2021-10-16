@@ -47,7 +47,8 @@ router
 
 router
   .post("/auth/register", registrationValidation, AuthController.register)
-  .post("/auth/login", AuthController.login);
+  .post("/auth/login", AuthController.login)
+  .post("/auth/is-auth", authCheck, AuthController.isAuth);
 
 router
   .get('/users', authCheck, UserController.show)

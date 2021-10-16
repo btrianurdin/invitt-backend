@@ -5,6 +5,7 @@ import { ErrorResponse } from "../../utils/ErrorResponse";
 import { createToken } from "../../utils/jwtToken";
 import { checkValidation } from "../../utils/validation";
 import Invitation, { IInvitationModel } from "../../models/Invitation";
+import { ObjectId } from "mongoose";
 
 export default class AuthController {
   static async register(req: Request, res: Response) {
@@ -64,5 +65,21 @@ export default class AuthController {
     }
   }
 
+  static async isAuth(req: Request, res: Response) {
+    try {
+      const sessionId: ObjectId = res.locals.users["_id"];
+
+      const user = await User.findOne({_id: sessionId}).select(
+        "_id fullname email phoneNumber gender status"
+      )
+
+      res.status(200).json({
+        status: "success",
+        data: user
+      });
+    } catch(err: any) {
+      ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
+    }
+  }
 }
 

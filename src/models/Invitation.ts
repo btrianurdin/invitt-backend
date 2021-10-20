@@ -6,7 +6,6 @@ export interface IUserPic {
 }
 
 export interface IInvitationModel extends Document {
-  user: Schema.Types.ObjectId;
   web_url: string;
   hero_title: string;
   groom_shortname: string;
@@ -20,17 +19,13 @@ export interface IInvitationModel extends Document {
   bride_text: string;
   greeting: string;
   template: string;
-  status: "nonactive" | "active" | "expired";
+  status: "show" | "hide";
   active_at: Date;
   expired_at: Date;
 }
 
 const InvitationSchema = new Schema(
   {
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    },
     web_url: String,
     hero_title: String,
     groom_shortname: String,
@@ -52,8 +47,8 @@ const InvitationSchema = new Schema(
     template: String,
     status: {
       type: String,
-      enum: ["active", "nonactive", "expired"],
-      default: "nonactive",
+      enum: ["hide", "show"],
+      default: "hide",
     },
     active_at: Date,
     expired_at: Date,

@@ -3,7 +3,7 @@ import User, { IUserModel } from "../models/User";
 import { ErrorResponse } from "../utils/ErrorResponse";
 import { verifyToken } from "../utils/jwtToken";
 
-const authCheck = async (req: Request, res: Response, next: NextFunction) => {
+const userStatusCheck = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const getToken = req.headers['authorization'];
     if (!getToken) throw new Error();
@@ -14,20 +14,21 @@ const authCheck = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
       const users = await User.findOne({_id: payload["_id"]}).select(
-        "_id status invitation"
+        "_id status"
       );
-      if (!users) throw new Error();
+      if (users && users.status === 'incomplete') {
+        return ErrorResponse.BAD_REQUEST(res, 'User registration has not been completed')
+      }
 
-      res.locals.users = users.toObject();
+      res.locals.users = users?.toObject();
   
       next();
     } catch(err: any) {
-      throw new Error("notfound");
+      ErrorResponse.NOT_FOUND(res, "user not found"); 
     }
   } catch(err: any) {
-    if (err.message === "notfound") return ErrorResponse.NOT_FOUND(res, "user not found"); 
     ErrorResponse.UNAUTHORIZED(res, err?.message); 
   }
 }
 
-export default authCheck;
+export default userStatusCheck;

@@ -6,6 +6,7 @@ import { createToken } from "../../utils/jwtToken";
 import { checkValidation } from "../../utils/validation";
 import Invitation, { IInvitationModel } from "../../models/Invitation";
 import { ObjectId } from "mongoose";
+import { IRegisteredInvitation } from "../../interfaces";
 
 export default class AuthController {
   static async register(req: Request, res: Response) {
@@ -17,9 +18,6 @@ export default class AuthController {
       try {
         const user = new User({...req.body, status: "incomplete" }  as IUserModel);
         const userSave = await user.save();
-
-        const invitation = new Invitation({ status: "nonactive", user: userSave["_id"]});
-        await invitation.save();
 
         const token = await createToken({
           _id: userSave["_id"],
@@ -38,6 +36,38 @@ export default class AuthController {
       ErrorResponse.INTERNAL_SERVER_ERROR(res, err.message);
     }
   }
+
+  static async completed(req: Request, res: Response) {
+    try {
+      const invitationBody = req.body as IRegisteredInvitation;
+      const session = res.locals.users;
+      
+      if (session["status"] === 'complete') {
+        return ErrorResponse.BAD_REQUEST(res, "user registration has been complete");
+      }
+      
+      if (checkValidation(req)) {
+        ErrorResponse.BAD_REQUEST(res, checkValidation(req));
+        return;
+      }
+
+      const invitation = new Invitation({...invitationBody, status: 'hide'});
+      invitation.save();
+      
+      if (invitation) {
+        await User.findByIdAndUpdate(session["_id"], {status: "complete", invitation: invitation["_id"]});
+      }
+
+      res.status(200).json({
+        message: "success",
+        data: invitation
+      })
+      
+    } catch (err: any) {
+      ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
+    }
+  }
+
 
   static async login(req: Request, res: Response) {
     try{
@@ -70,7 +100,7 @@ export default class AuthController {
       const sessionId: ObjectId = res.locals.users["_id"];
 
       const user = await User.findOne({_id: sessionId}).select(
-        "_id fullname email phoneNumber gender status"
+        "_id fullname email phoneNumber gender status invitation"
       )
 
       res.status(200).json({

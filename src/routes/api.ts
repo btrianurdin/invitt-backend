@@ -11,29 +11,44 @@ import WeddingDateController from "../controllers/api/WeddingDateController";
 import { uploadContent, uploadPictureField } from "../middlewares/validations/imageUpload";
 import GalleryController from "../controllers/api/GalleryController";
 import GuestbookController from "../controllers/api/GuestbookController";
+import userStatusCheck from "../middlewares/userStatusCheck";
+import completedAccount from "../middlewares/validations/completedAccount";
+import invitationUpdate from "../middlewares/validations/invitationUpdate";
 
 const router = Router();
 
 router
-  .post('/register/completed', authCheck, registeredInvitation, InvitationController.completedRegistration)
-  .get('/invitations', authCheck, InvitationController.show)
-  .put("/invitations", authCheck, InvitationController.update)
+  .get('/invitations', authCheck, userStatusCheck, InvitationController.show)
+  .put("/invitations", authCheck, userStatusCheck, invitationUpdate, InvitationController.update)
   .put(
     '/invitations/picture', 
     authCheck, 
+    userStatusCheck,
     body('content').custom(uploadContent), 
     body('field').custom(uploadPictureField), 
     InvitationController.images
   )
-  .delete("/invitations/picture", authCheck, InvitationController.imagesDelete)
-  .put("/invitations/active", authCheck, InvitationController.status)
-  .post("/invitations/wedding_dates", authCheck, WeddingDateController.create)
-  .put("/invitations/wedding_dates", authCheck, WeddingDateController.update)
-  .delete("/invitations/wedding_dates", authCheck, WeddingDateController.delete)
-  .get("/invitations/wedding_dates", authCheck, WeddingDateController.all)
-  .post("/invitations/galleries", authCheck, body('content').custom(uploadContent), GalleryController.create)
-  .delete("/invitations/galleries", authCheck, GalleryController.delete)
-  .get("/invitations/galleries", authCheck, GalleryController.all);
+  .delete(
+    "/invitations/picture", 
+    authCheck, 
+    userStatusCheck,
+    body('field').custom(uploadPictureField),
+    InvitationController.imagesDelete
+  )
+  .post("/invitations/wedding-dates", authCheck, userStatusCheck, WeddingDateController.create)
+  .get("/invitations/wedding-dates", authCheck, userStatusCheck, WeddingDateController.all)
+  .put("/invitations/wedding-dates/:id", authCheck, userStatusCheck, WeddingDateController.update)
+  .delete("/invitations/wedding-dates/:id", authCheck, userStatusCheck, WeddingDateController.delete)
+  .post(
+    "/invitations/galleries", 
+    authCheck, 
+    userStatusCheck,
+    body('content').custom(uploadContent), 
+    GalleryController.create
+  )
+  .get("/invitations/galleries", authCheck, userStatusCheck, GalleryController.all)
+  .delete("/invitations/galleries/:id", authCheck, userStatusCheck, GalleryController.delete);
+  //   .put("/invitations/active", authCheck, InvitationController.status)
 
 router
   .post(
@@ -47,11 +62,22 @@ router
 
 router
   .post("/auth/register", registrationValidation, AuthController.register)
-  .post("/auth/login", AuthController.login);
+  .post("/auth/register/completed", authCheck, completedAccount, AuthController.completed)
+  .post("/auth/login", AuthController.login)
+  .post("/auth/is-auth", authCheck, AuthController.isAuth)
+  .post("/auth/forgot-password", AuthController.forgotPassword)
+  .post("/auth/reset-password", AuthController.resetPassword);
 
 router
-  .get('/users', authCheck, UserController.show)
-  .put('/users', authCheck, updateUser, UserController.edit)
-  .put('/users/password', authCheck, UserController.editPassword);
+  .get('/users', authCheck, userStatusCheck, UserController.show)
+  .put('/users', authCheck, userStatusCheck, updateUser, UserController.edit)
+  .put(
+    '/users/password', 
+    authCheck, 
+    userStatusCheck, 
+    body("oldPassword").isString(),
+    body("newPassword").isString(),
+    UserController.editPassword
+  );
 
 export default router;

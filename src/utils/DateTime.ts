@@ -14,3 +14,9 @@ export const dateNow = (): Date | string => {
 
   return new Date(dateTZ).toISOString();
 }
+
+export const timeNow = (): number => {
+  const dateTZ = new Date().toLocaleString('en-US', { timeZone: Config.timeZone });
+
+  return new Date(dateTZ).getTime();
+}

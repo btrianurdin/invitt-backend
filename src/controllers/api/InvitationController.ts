@@ -15,48 +15,11 @@ import { dateNow, nextDayTime } from "../../utils/DateTime";
 import Config from "../../config";
 
 export default class InvitationController {
-  static async completedRegistration(req: Request, res: Response) {
-    try {
-      const invitationBody = req.body as IRegisteredInvitation;
-
-      if (checkValidation(req)) {
-        ErrorResponse.BAD_REQUEST(res, checkValidation(req));
-        return;
-      }
-
-      if (res.locals.users["status"] === "complete") {
-        return ErrorResponse.BAD_REQUEST(res, "registration status is completed");
-      }
-
-      const sessionId: ObjectId = res.locals.users["_id"];
-      
-      delete invitationBody["user"];
-      
-      const invitation = await Invitation.findOneAndUpdate({user: sessionId}, invitationBody, {new: true});
-      
-      if (invitation) {
-        await User.findByIdAndUpdate(sessionId, {status: "complete"});
-      }
-
-      res.status(200).json({
-        message: "success",
-        data: invitation
-      })
-      
-    } catch (err: any) {
-      ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
-    }
-  }
-
   static async show(req: Request, res: Response) {
     try{
-      if (res.locals.users["status"] === "incomplete") {
-        return ErrorResponse.ACCESS_DENIED(res, "user status is not complete yet")
-      }
+      const session = res.locals.users;
 
-      const sessionId: ObjectId = res.locals.users["_id"];
-
-      const invitation = await Invitation.findOne({user: sessionId});
+      const invitation = await Invitation.findById(session["invitation"]);
 
       res.status(200).json({
         status: "success",
@@ -67,41 +30,39 @@ export default class InvitationController {
     }
   }
 
-  static async status(req: Request, res: Response) {
-    try{
-      if (res.locals.users["status"] === "incomplete") {
-        return ErrorResponse.ACCESS_DENIED(res, "user status is not complete yet")
-      }
+  // static async status(req: Request, res: Response) {
+  //   try{
+  //     if (res.locals.users["status"] === "incomplete") {
+  //       return ErrorResponse.ACCESS_DENIED(res, "user status is not complete yet")
+  //     }
       
-      const sessionId: ObjectId = res.locals.users["_id"];
+  //     const sessionId: ObjectId = res.locals.users["_id"];
 
-      const invData = await Invitation.findOne({user: sessionId}).select("status");
+  //     const invData = await Invitation.findOne({user: sessionId}).select("status");
 
-      if (invData?.status !== "nonactive") return ErrorResponse.BAD_REQUEST(res, "status can't be changed")
+  //     if (invData?.status !== "nonactive") return ErrorResponse.BAD_REQUEST(res, "status can't be changed")
 
-      const invitation = await Invitation.findOneAndUpdate({user: sessionId}, 
-        {
-          status: "active",
-          active_at: dateNow(),
-          expired_at: nextDayTime(Config.invitationExpiredTime)
-        },
-        {new: true}
-      ).select("status active_at expired_at")
+  //     const invitation = await Invitation.findOneAndUpdate({user: sessionId}, 
+  //       {
+  //         status: "active",
+  //         active_at: dateNow(),
+  //         expired_at: nextDayTime(Config.invitationExpiredTime)
+  //       },
+  //       {new: true}
+  //     ).select("status active_at expired_at")
 
-      res.status(200).json({
-        status: "success",
-        data: invitation,
-      });
-    } catch(err: any) {
-      ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
-    }
-  }
+  //     res.status(200).json({
+  //       status: "success",
+  //       data: invitation,
+  //     });
+  //   } catch(err: any) {
+  //     ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
+  //   }
+  // }
 
   static async update(req: Request, res: Response) {
     try{
-      if (res.locals.users["status"] === "incomplete") {
-        return ErrorResponse.ACCESS_DENIED(res, "user status is not complete yet")
-      }
+      if (checkValidation(req)) return ErrorResponse.BAD_REQUEST(res, checkValidation(req));
 
       const updateData = req.body;
 
@@ -109,9 +70,9 @@ export default class InvitationController {
         delete updateData![key];
       })
 
-      const sessionId: ObjectId = res.locals.users["_id"];
+      const session = res.locals.users;
 
-      const invitation = await Invitation.findOneAndUpdate({user: sessionId}, updateData, {new: true});
+      const invitation = await Invitation.findByIdAndUpdate(session["invitation"], updateData, {new: true});
 
       res.status(200).json({
         status: "success",
@@ -126,13 +87,12 @@ export default class InvitationController {
     try{
       const { content, field } = req.body as IinvitationImg;
 
-      if (checkValidation(req)) {
-        ErrorResponse.BAD_REQUEST(res, checkValidation(req));
-        return;
-      }
+      if (checkValidation(req)) return ErrorResponse.BAD_REQUEST(res, checkValidation(req));
 
-      const sessionId: ObjectId = res.locals.users["_id"];
-      const invitation = await Invitation.findOne({ user: sessionId }).select("_id groom_pic bride_pic");
+      const session = res.locals.users;
+      const invitation = await Invitation.findById(session["invitation"]).select(
+        "_id groom_pic bride_pic"
+      );
 
       const inv_pic = (invitation as any)![`${field}_pic`];
       
@@ -146,12 +106,14 @@ export default class InvitationController {
           public_name: public_id,
           url: secure_url,
         }
-        const invSave = await Invitation.findOneAndUpdate(
-          {user: sessionId}, 
-          {[`${field}_pic`]: invPicSave}, 
+        const invSave = await Invitation.findByIdAndUpdate(
+          session["invitation"], 
+          {
+            [`${field}_pic`]: invPicSave
+          }, 
           {new: true}
         )
-          .select(`_id ${field}_pic`);
+        .select(`_id ${field}_pic`);
         
         res.status(200).json({
           status: "success",
@@ -169,13 +131,11 @@ export default class InvitationController {
     try{
       const { field } = req.body as IinvitationImg;
 
-      if (!PictureInvitationKey.includes(field)) {
-        return ErrorResponse.BAD_REQUEST(res, "field is not valid");
-      }
+      if (checkValidation(req)) return ErrorResponse.BAD_REQUEST(res, checkValidation(req));
 
-      const sessionId: ObjectId = res.locals.users["_id"];
+      const session = res.locals.users;
 
-      const invitationData = await Invitation.findOne({user: sessionId})
+      const invitationData = await Invitation.findById(session["invitation"])
         .select(`${field}_pic`);
 
       if (JSON.stringify((invitationData as any)![`${field}_pic`]) === "{}") {
@@ -184,7 +144,7 @@ export default class InvitationController {
 
       try{
         await imageRemove((invitationData as any)![`${field}_pic`]['public_name']);
-        await Invitation.findOneAndUpdate({user: sessionId}, 
+        await Invitation.findByIdAndUpdate(session["invitation"], 
           {
             $unset: {
               [`${field}_pic`]: ""

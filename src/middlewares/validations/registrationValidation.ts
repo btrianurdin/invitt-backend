@@ -4,7 +4,6 @@ import User from "../../models/User";
 const registrationValidation = checkSchema({
   fullname: {
     in: ["body"],
-    optional: true,
     custom: {
       errorMessage: "fullname is not valid",
       options: (value: string) => {

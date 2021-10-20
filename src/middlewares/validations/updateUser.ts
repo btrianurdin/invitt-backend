@@ -4,12 +4,8 @@ const updateUser = checkSchema({
   fullname: {
     in: ["body"],
     optional: true,
-    custom: {
+    isString: {
       errorMessage: "fullname is not valid",
-      options: (value: string) => {
-        if (value.match(/(?=^.{0,40}$)^[a-zA-Z-]+\s[a-zA-Z-]+$/)) return true;
-        return false
-      }
     },
   },
   gender: {

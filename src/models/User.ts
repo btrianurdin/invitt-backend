@@ -8,6 +8,7 @@ export interface IUserModel extends Document {
   phoneNumber: string; 
   gender: "man" | "women" | "none";
   status: "incomplete" | "complete";
+  invitation: Schema.Types.ObjectId;
 }
 
 const UserSchema: Schema<IUserModel> = new Schema({
@@ -30,7 +31,11 @@ const UserSchema: Schema<IUserModel> = new Schema({
     type: String,
     enum: ["incomplete", "complete"],
     default: "incomplete"
-  }
+  },
+  invitation: {
+    type: Schema.Types.ObjectId,
+    ref: "Invitation",
+  },
 }, {timestamps: true});
 
 UserSchema.pre<IUserModel>("save", function (next) {

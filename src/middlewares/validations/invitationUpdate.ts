@@ -1,9 +1,10 @@
 import { checkSchema } from "express-validator";
 import Invitation from "../../models/Invitation";
 
-const completedAccount = checkSchema({
+const invitationUpdate = checkSchema({
   web_url: {
     in: ["body"],
+    optional: true,
     isSlug: {
       errorMessage: "slug is not valid",
     },
@@ -15,24 +16,18 @@ const completedAccount = checkSchema({
       }
     }
   },
-  groom_fullname: {
+  status: {
     in: ["body"],
-    isString: {
-      errorMessage: "groom fullname is not valid",
-    }
-  },
-  bride_fullname: {
-    in: ["body"],
-    isString: {
-      errorMessage: "bride fullname is not valid",
-    }
-  },
-  template: {
-    in: ["body"],
-    isString: {
-      errorMessage: "template is not found"
+    optional: true,
+    custom: {
+      errorMessage: "status not valid",
+      options: (value: string) => {
+        const status = ["hide", "show"];
+        if (status.includes(value)) return true;
+        return false;
+      }
     }
   }
 });
 
-export default completedAccount;
+export default invitationUpdate;

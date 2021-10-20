@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { ObjectId } from "mongoose";
-import { IPublicUser, notUpdatedUserDoc } from "../../interfaces";
-import User, { IUserModel } from "../../models/User";
+import { compare } from 'bcrypt';
+import { IPublicUser } from "../../interfaces";
+import User from "../../models/User";
 import { ErrorResponse } from "../../utils/ErrorResponse";
 import { checkValidation } from "../../utils/validation";
 
@@ -55,13 +56,21 @@ export default class UserController {
 
   static async editPassword(req: Request, res: Response) {
     try {
-      const { password } = req.body as {password: string};
-
+      const { oldPassword, newPassword } = req.body as {oldPassword: string, newPassword: string};
       const sessionId: ObjectId = res.locals.users["_id"];
 
+      if (checkValidation(req)) return ErrorResponse.BAD_REQUEST(res, checkValidation(req));
+
       const user = await User.findById(sessionId);
+      // check user
+      if (!user) return ErrorResponse.BAD_REQUEST(res, "user is not found");
+      
+      // check old password
+      const checkOldPassword = await compare(oldPassword, user.password);
+      if (!checkOldPassword) return ErrorResponse.BAD_REQUEST(res, "old password is not valid");
+
       Object.assign(user, {
-        password
+        password: newPassword
       });
       await user?.save();
 

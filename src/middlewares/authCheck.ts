@@ -14,7 +14,7 @@ const authCheck = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
       const users = await User.findOne({_id: payload["_id"]}).select(
-        "_id status"
+        "_id status invitation"
       );
       if (!users) throw new Error();
 

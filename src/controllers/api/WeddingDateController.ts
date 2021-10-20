@@ -1,18 +1,14 @@
 import { Request, Response } from "express";
-import { Schema } from "express-validator";
-import { ObjectId } from "mongoose";
 import { IWeddingDateUpdate } from "../../interfaces";
-import Invitation from "../../models/Invitation";
 import WeddingDate from "../../models/WeddingDate";
 import { ErrorResponse } from "../../utils/ErrorResponse";
 
 export default class WeddingDateController {
   static async all(req: Request, res: Response) {
     try {
-      const sessionId = res.locals.users["_id"];
-      const invitation = await Invitation.findOne({user: sessionId}).select("_id");
+      const session = res.locals.users;
 
-      const weddingdate = await WeddingDate.find({invitation: invitation!["_id"]});
+      const weddingdate = await WeddingDate.find({invitation: session["invitation"]});
 
       res.status(200).json({
         status: "success",
@@ -29,16 +25,15 @@ export default class WeddingDateController {
 
       delete reqData!["invitation"];
 
-      const sessionId = res.locals.users["_id"];
-      const invitation = await Invitation.findOne({user: sessionId}).select("_id");
+      const session = res.locals.users;
 
-      const checkWeddingDate = await WeddingDate.findOne({invitation: invitation!["_id"]}).countDocuments();
+      const checkWeddingDate = await WeddingDate.findOne({invitation: session["invitation"]}).countDocuments();
 
       if (checkWeddingDate >= 2) return ErrorResponse.BAD_REQUEST(res, "maximum wedding date is 2");
       
       const weddingDate = await new WeddingDate({
         ...reqData,
-        invitation: invitation!["_id"],
+        invitation: session["invitation"],
       }).save();
 
       res.status(200).json({
@@ -53,17 +48,17 @@ export default class WeddingDateController {
   static async update(req: Request, res: Response) {
     try {
       const reqData = req.body as IWeddingDateUpdate;
+      const { id } = req.params;
 
-      if (reqData.id === undefined) return ErrorResponse.BAD_REQUEST(res, "id is empty");
+      if (id === undefined) return ErrorResponse.BAD_REQUEST(res, "id is empty");
 
       delete reqData!["invitation"];
 
-      const sessionId = res.locals.users["_id"];
-      const invitation = await Invitation.findOne({user: sessionId}).select("_id");
-
+      const session = res.locals.users;
+      
       try {
         const weddingdate = await WeddingDate.findOneAndUpdate(
-          {_id: reqData.id, invitation: invitation!["_id"]},
+          {_id: id, invitation: session["invitation"]},
           reqData,
           {new: true}
         );
@@ -83,15 +78,14 @@ export default class WeddingDateController {
 
   static async delete(req: Request, res: Response) {
     try {
-       const {id} = req.body as {id: ObjectId};
+      const { id } = req.params;
 
-       if (!id) return ErrorResponse.BAD_REQUEST(res, "id is empty");
+      if (!id) return ErrorResponse.BAD_REQUEST(res, "id is empty");
 
-       const sessionId = res.locals.users["_id"];
-       const invitation = await Invitation.findOne({user: sessionId}).select("_id");
+      const session = res.locals.users;
 
       try {
-        await WeddingDate.findOneAndDelete({_id: id, invitation: invitation!["_id"]});
+        await WeddingDate.findOneAndDelete({_id: id, invitation: session["invitation"]});
 
         res.status(200).json({
           status: "success",

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { compare} from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import User, { IUserModel } from "../../models/User";
 import { ErrorResponse } from "../../utils/ErrorResponse";
 import { createToken } from "../../utils/jwtToken";
@@ -7,6 +7,11 @@ import { checkValidation } from "../../utils/validation";
 import Invitation, { IInvitationModel } from "../../models/Invitation";
 import { ObjectId } from "mongoose";
 import { IRegisteredInvitation } from "../../interfaces";
+import Random from "../../utils/Random";
+import Token from "../../models/Token";
+import SendMail from "../../services/SendMail";
+import EmailTemplate from "../../utils/EmailTemplate";
+import { timeNow } from "../../utils/DateTime";
 
 export default class AuthController {
   static async register(req: Request, res: Response) {
@@ -106,6 +111,81 @@ export default class AuthController {
       res.status(200).json({
         status: "success",
         data: user
+      });
+    } catch(err: any) {
+      ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
+    }
+  }
+
+  static async forgotPassword(req: Request, res: Response) {
+    try {
+      const { email } = req.body as {email: string};
+
+      const user = await User.findOne({ email });
+      if (!user) return ErrorResponse.BAD_REQUEST(res, "email not found");
+
+      const generateToken = Random.length(28);
+
+      const mailData = {
+        from: 'Invitt Website <noreply@invitt.com>',
+        to: email,
+        subject: "Reset Password di Website Invitt",
+        html: EmailTemplate(email, generateToken)
+      }
+
+      SendMail(mailData)
+        .then(async () => {
+          const expired = timeNow() + 3600000; // 1 hour
+
+          const token = await Token.findOneAndUpdate({
+            user: user["_id"]
+          }, { 
+            token: generateToken, 
+            expired 
+          }, {
+            upsert: true, 
+            setDefaultsOnInsert: true,
+            new: true 
+          })
+
+          if (token) {
+            res.status(200).json({
+              status: "success",
+              data: {}
+            })
+          } else {
+            throw new Error();
+          }
+
+        })
+        .catch(() => {
+          throw Error("send email error");
+        })
+    } catch(err: any) {
+      ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
+    }
+  }
+
+  static async resetPassword(req: Request, res: Response) {
+    try {
+      const { token, newPassword } = req.body;
+
+      const getToken = await Token.findOne({ token });
+
+      if (!getToken) return ErrorResponse.BAD_REQUEST(res, "token not found");
+      if (timeNow() > getToken.expired) return ErrorResponse.BAD_REQUEST(res, "token expired");
+      
+      const user = await User.findById(getToken.user);
+      Object.assign(user, {
+        password: newPassword
+      });
+      await user?.save();
+
+      await Token.findByIdAndDelete(getToken["_id"]);
+
+      res.status(200).json({
+        status: "success",
+        data: {}
       });
     } catch(err: any) {
       ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);

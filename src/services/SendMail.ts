@@ -9,8 +9,6 @@ interface ISendMail {
 }
 
 const SendMail = async (data: ISendMail) => {
-  const testAccount = await nodemailer.createTestAccount();
-
   const transporter = nodemailer.createTransport({
     host: Config.mail.host,
     port: Config.mail.port,

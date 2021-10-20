@@ -20,7 +20,8 @@ const Config = {
     port: Number(process.env.MAIL_PORT) || 2525,
     user: process.env.MAIL_USER || "test",
     pass: process.env.MAIL_PASS || "test",
-  }
+  },
+  resetPassworUrl: process.env.RESET_PW_URL || 'https://contoh.com'
 };
 
 export default Config;

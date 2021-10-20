@@ -52,7 +52,8 @@ router
   .post("/auth/register/completed", authCheck, completedAccount, AuthController.completed)
   .post("/auth/login", AuthController.login)
   .post("/auth/is-auth", authCheck, AuthController.isAuth)
-  .post("/auth/forgot-password");
+  .post("/auth/forgot-password", AuthController.forgotPassword)
+  .post("/auth/reset-password", AuthController.resetPassword);
 
 router
   .get('/users', authCheck, userStatusCheck, UserController.show)

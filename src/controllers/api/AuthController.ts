@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { compare, hash } from 'bcrypt';
+import { compare } from 'bcrypt';
 import User, { IUserModel } from "../../models/User";
 import { ErrorResponse } from "../../utils/ErrorResponse";
 import { createToken } from "../../utils/jwtToken";
 import { checkValidation } from "../../utils/validation";
-import Invitation, { IInvitationModel } from "../../models/Invitation";
+import Invitation from "../../models/Invitation";
 import { ObjectId } from "mongoose";
 import { IRegisteredInvitation } from "../../interfaces";
 import Random from "../../utils/Random";

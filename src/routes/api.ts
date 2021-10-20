@@ -16,10 +16,9 @@ import completedAccount from "../middlewares/validations/completedAccount";
 
 const router = Router();
 
-// router
-//   .post('/register/completed', authCheck, registeredInvitation, InvitationController.completedRegistration)
-//   .get('/invitations', authCheck, InvitationController.show)
-//   .put("/invitations", authCheck, InvitationController.update)
+router
+  .get('/invitations', authCheck, InvitationController.show)
+  .put("/invitations", authCheck, InvitationController.update)
 //   .put(
 //     '/invitations/picture', 
 //     authCheck, 

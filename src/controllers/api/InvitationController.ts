@@ -17,13 +17,9 @@ import Config from "../../config";
 export default class InvitationController {
   static async show(req: Request, res: Response) {
     try{
-      if (res.locals.users["status"] === "incomplete") {
-        return ErrorResponse.ACCESS_DENIED(res, "user status is not complete yet")
-      }
+      const session = res.locals.users;
 
-      const sessionId: ObjectId = res.locals.users["_id"];
-
-      const invitation = await Invitation.findOne({user: sessionId});
+      const invitation = await Invitation.findById(session["invitation"]);
 
       res.status(200).json({
         status: "success",
@@ -34,35 +30,35 @@ export default class InvitationController {
     }
   }
 
-  static async status(req: Request, res: Response) {
-    try{
-      if (res.locals.users["status"] === "incomplete") {
-        return ErrorResponse.ACCESS_DENIED(res, "user status is not complete yet")
-      }
+  // static async status(req: Request, res: Response) {
+  //   try{
+  //     if (res.locals.users["status"] === "incomplete") {
+  //       return ErrorResponse.ACCESS_DENIED(res, "user status is not complete yet")
+  //     }
       
-      const sessionId: ObjectId = res.locals.users["_id"];
+  //     const sessionId: ObjectId = res.locals.users["_id"];
 
-      const invData = await Invitation.findOne({user: sessionId}).select("status");
+  //     const invData = await Invitation.findOne({user: sessionId}).select("status");
 
-      if (invData?.status !== "nonactive") return ErrorResponse.BAD_REQUEST(res, "status can't be changed")
+  //     if (invData?.status !== "nonactive") return ErrorResponse.BAD_REQUEST(res, "status can't be changed")
 
-      const invitation = await Invitation.findOneAndUpdate({user: sessionId}, 
-        {
-          status: "active",
-          active_at: dateNow(),
-          expired_at: nextDayTime(Config.invitationExpiredTime)
-        },
-        {new: true}
-      ).select("status active_at expired_at")
+  //     const invitation = await Invitation.findOneAndUpdate({user: sessionId}, 
+  //       {
+  //         status: "active",
+  //         active_at: dateNow(),
+  //         expired_at: nextDayTime(Config.invitationExpiredTime)
+  //       },
+  //       {new: true}
+  //     ).select("status active_at expired_at")
 
-      res.status(200).json({
-        status: "success",
-        data: invitation,
-      });
-    } catch(err: any) {
-      ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
-    }
-  }
+  //     res.status(200).json({
+  //       status: "success",
+  //       data: invitation,
+  //     });
+  //   } catch(err: any) {
+  //     ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
+  //   }
+  // }
 
   static async update(req: Request, res: Response) {
     try{

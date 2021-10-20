@@ -62,9 +62,7 @@ export default class InvitationController {
 
   static async update(req: Request, res: Response) {
     try{
-      if (res.locals.users["status"] === "incomplete") {
-        return ErrorResponse.ACCESS_DENIED(res, "user status is not complete yet")
-      }
+      if (checkValidation(req)) return ErrorResponse.BAD_REQUEST(res, checkValidation(req));
 
       const updateData = req.body;
 
@@ -72,9 +70,9 @@ export default class InvitationController {
         delete updateData![key];
       })
 
-      const sessionId: ObjectId = res.locals.users["_id"];
+      const session = res.locals.users;
 
-      const invitation = await Invitation.findOneAndUpdate({user: sessionId}, updateData, {new: true});
+      const invitation = await Invitation.findByIdAndUpdate(session["invitation"], updateData, {new: true});
 
       res.status(200).json({
         status: "success",

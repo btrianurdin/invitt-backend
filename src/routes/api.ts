@@ -13,12 +13,13 @@ import GalleryController from "../controllers/api/GalleryController";
 import GuestbookController from "../controllers/api/GuestbookController";
 import userStatusCheck from "../middlewares/userStatusCheck";
 import completedAccount from "../middlewares/validations/completedAccount";
+import invitationUpdate from "../middlewares/validations/invitationUpdate";
 
 const router = Router();
 
 router
   .get('/invitations', authCheck, InvitationController.show)
-  .put("/invitations", authCheck, InvitationController.update)
+  .put("/invitations", authCheck, invitationUpdate, InvitationController.update)
 //   .put(
 //     '/invitations/picture', 
 //     authCheck, 

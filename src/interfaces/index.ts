@@ -50,7 +50,7 @@ export interface IGuestBookCreate {
 }
 
 export const InvitationBlockUpdate = [
-  "user", "groom_pic", "bride_pic", "status", "active_at", "expired_at"
+  "groom_pic", "bride_pic", "active_at", "expired_at"
 ]
 
 export const PictureInvitationKey = ["bride", "groom"];

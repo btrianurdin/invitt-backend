@@ -131,13 +131,11 @@ export default class InvitationController {
     try{
       const { field } = req.body as IinvitationImg;
 
-      if (!PictureInvitationKey.includes(field)) {
-        return ErrorResponse.BAD_REQUEST(res, "field is not valid");
-      }
+      if (checkValidation(req)) return ErrorResponse.BAD_REQUEST(res, checkValidation(req));
 
-      const sessionId: ObjectId = res.locals.users["_id"];
+      const session = res.locals.users;
 
-      const invitationData = await Invitation.findOne({user: sessionId})
+      const invitationData = await Invitation.findById(session["invitation"])
         .select(`${field}_pic`);
 
       if (JSON.stringify((invitationData as any)![`${field}_pic`]) === "{}") {
@@ -146,7 +144,7 @@ export default class InvitationController {
 
       try{
         await imageRemove((invitationData as any)![`${field}_pic`]['public_name']);
-        await Invitation.findOneAndUpdate({user: sessionId}, 
+        await Invitation.findByIdAndUpdate(session["invitation"], 
           {
             $unset: {
               [`${field}_pic`]: ""

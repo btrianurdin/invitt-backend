@@ -27,7 +27,12 @@ router
     body('field').custom(uploadPictureField), 
     InvitationController.images
   )
-//   .delete("/invitations/picture", authCheck, InvitationController.imagesDelete)
+  .delete(
+    "/invitations/picture", 
+    authCheck, 
+    body('field').custom(uploadPictureField),
+    InvitationController.imagesDelete
+  )
 //   .put("/invitations/active", authCheck, InvitationController.status)
 //   .post("/invitations/wedding_dates", authCheck, WeddingDateController.create)
 //   .put("/invitations/wedding_dates", authCheck, WeddingDateController.update)

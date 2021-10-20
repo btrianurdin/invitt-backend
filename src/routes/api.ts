@@ -20,13 +20,13 @@ const router = Router();
 router
   .get('/invitations', authCheck, InvitationController.show)
   .put("/invitations", authCheck, invitationUpdate, InvitationController.update)
-//   .put(
-//     '/invitations/picture', 
-//     authCheck, 
-//     body('content').custom(uploadContent), 
-//     body('field').custom(uploadPictureField), 
-//     InvitationController.images
-//   )
+  .put(
+    '/invitations/picture', 
+    authCheck, 
+    body('content').custom(uploadContent), 
+    body('field').custom(uploadPictureField), 
+    InvitationController.images
+  )
 //   .delete("/invitations/picture", authCheck, InvitationController.imagesDelete)
 //   .put("/invitations/active", authCheck, InvitationController.status)
 //   .post("/invitations/wedding_dates", authCheck, WeddingDateController.create)

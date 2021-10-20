@@ -87,13 +87,12 @@ export default class InvitationController {
     try{
       const { content, field } = req.body as IinvitationImg;
 
-      if (checkValidation(req)) {
-        ErrorResponse.BAD_REQUEST(res, checkValidation(req));
-        return;
-      }
+      if (checkValidation(req)) return ErrorResponse.BAD_REQUEST(res, checkValidation(req));
 
-      const sessionId: ObjectId = res.locals.users["_id"];
-      const invitation = await Invitation.findOne({ user: sessionId }).select("_id groom_pic bride_pic");
+      const session = res.locals.users;
+      const invitation = await Invitation.findById(session["invitation"]).select(
+        "_id groom_pic bride_pic"
+      );
 
       const inv_pic = (invitation as any)![`${field}_pic`];
       
@@ -107,12 +106,14 @@ export default class InvitationController {
           public_name: public_id,
           url: secure_url,
         }
-        const invSave = await Invitation.findOneAndUpdate(
-          {user: sessionId}, 
-          {[`${field}_pic`]: invPicSave}, 
+        const invSave = await Invitation.findByIdAndUpdate(
+          session["invitation"], 
+          {
+            [`${field}_pic`]: invPicSave
+          }, 
           {new: true}
         )
-          .select(`_id ${field}_pic`);
+        .select(`_id ${field}_pic`);
         
         res.status(200).json({
           status: "success",

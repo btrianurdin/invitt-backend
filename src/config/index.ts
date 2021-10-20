@@ -15,6 +15,12 @@ const Config = {
   maxImageSize: process.env.MAX_IMAGE_SIZE || 5000,
   invitationExpiredTime: Number(process.env.INVITATION_EXPIRED_TIME) || 1,
   timeZone: process.env.TIME_ZONE || 'Asia/Jakarta',
+  mail: {
+    host: process.env.MAIL_HOST || "mail.gmail.com",
+    port: Number(process.env.MAIL_PORT) || 2525,
+    user: process.env.MAIL_USER || "test",
+    pass: process.env.MAIL_PASS || "test",
+  }
 };
 
 export default Config;

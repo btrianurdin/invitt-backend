@@ -51,11 +51,19 @@ router
   .post("/auth/register", registrationValidation, AuthController.register)
   .post("/auth/register/completed", authCheck, completedAccount, AuthController.completed)
   .post("/auth/login", AuthController.login)
-  .post("/auth/is-auth", authCheck, AuthController.isAuth);
+  .post("/auth/is-auth", authCheck, AuthController.isAuth)
+  .post("/auth/forgot-password");
 
 router
   .get('/users', authCheck, userStatusCheck, UserController.show)
   .put('/users', authCheck, userStatusCheck, updateUser, UserController.edit)
-  .put('/users/password', authCheck, userStatusCheck, UserController.editPassword);
+  .put(
+    '/users/password', 
+    authCheck, 
+    userStatusCheck, 
+    body("oldPassword").isString(),
+    body("newPassword").isString(),
+    UserController.editPassword
+  );
 
 export default router;

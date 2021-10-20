@@ -18,11 +18,12 @@ import invitationUpdate from "../middlewares/validations/invitationUpdate";
 const router = Router();
 
 router
-  .get('/invitations', authCheck, InvitationController.show)
-  .put("/invitations", authCheck, invitationUpdate, InvitationController.update)
+  .get('/invitations', authCheck, userStatusCheck, InvitationController.show)
+  .put("/invitations", authCheck, userStatusCheck, invitationUpdate, InvitationController.update)
   .put(
     '/invitations/picture', 
     authCheck, 
+    userStatusCheck,
     body('content').custom(uploadContent), 
     body('field').custom(uploadPictureField), 
     InvitationController.images
@@ -30,17 +31,24 @@ router
   .delete(
     "/invitations/picture", 
     authCheck, 
+    userStatusCheck,
     body('field').custom(uploadPictureField),
     InvitationController.imagesDelete
   )
-//   .put("/invitations/active", authCheck, InvitationController.status)
-//   .post("/invitations/wedding_dates", authCheck, WeddingDateController.create)
-//   .put("/invitations/wedding_dates", authCheck, WeddingDateController.update)
-//   .delete("/invitations/wedding_dates", authCheck, WeddingDateController.delete)
-//   .get("/invitations/wedding_dates", authCheck, WeddingDateController.all)
-//   .post("/invitations/galleries", authCheck, body('content').custom(uploadContent), GalleryController.create)
-//   .delete("/invitations/galleries", authCheck, GalleryController.delete)
-//   .get("/invitations/galleries", authCheck, GalleryController.all);
+  .post("/invitations/wedding-dates", authCheck, userStatusCheck, WeddingDateController.create)
+  .get("/invitations/wedding-dates", authCheck, userStatusCheck, WeddingDateController.all)
+  .put("/invitations/wedding-dates/:id", authCheck, userStatusCheck, WeddingDateController.update)
+  .delete("/invitations/wedding-dates/:id", authCheck, userStatusCheck, WeddingDateController.delete)
+  .post(
+    "/invitations/galleries", 
+    authCheck, 
+    userStatusCheck,
+    body('content').custom(uploadContent), 
+    GalleryController.create
+  )
+  .get("/invitations/galleries", authCheck, userStatusCheck, GalleryController.all)
+  .delete("/invitations/galleries/:id", authCheck, userStatusCheck, GalleryController.delete);
+  //   .put("/invitations/active", authCheck, InvitationController.status)
 
 router
   .post(

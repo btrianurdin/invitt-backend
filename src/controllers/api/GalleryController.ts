@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { ObjectId } from "mongoose";
+import Config from "../../config";
 import Gallery from "../../models/Gallery";
 import Invitation from "../../models/Invitation";
 import { ErrorResponse } from "../../utils/ErrorResponse";
@@ -11,17 +12,15 @@ export default class GalleryController {
     try {
       const { content } = req.body;
 
-      if (checkValidation(req)) {
-        ErrorResponse.BAD_REQUEST(res, checkValidation(req));
-        return;
+      if (checkValidation(req)) return ErrorResponse.BAD_REQUEST(res, checkValidation(req));
+
+      const session = res.locals.users;
+
+      const checkGallery = await Gallery.findOne({invitation: session["invitation"]}).countDocuments();
+
+      if (checkGallery >= Config.maxGallery) {
+        return ErrorResponse.BAD_REQUEST(res, `maximum gallery is ${Config.maxGallery} images`)
       }
-
-      const sessionId = res.locals.users["_id"];
-      const invitation = await Invitation.findOne({user: sessionId}).select("_id");
-
-      const checkGallery = await Gallery.findOne({invitation: invitation!["_id"]}).countDocuments();
-
-      if (checkGallery >= 6) return ErrorResponse.BAD_REQUEST(res, "maximum gallery is 6 images");
 
       try {
         const { public_id, secure_url } = await imageUpload(content);
@@ -29,7 +28,7 @@ export default class GalleryController {
         const gallery = new Gallery({
           public_name: public_id, 
           url: secure_url, 
-          invitation: invitation!["_id"]
+          invitation: session["invitation"]
         });
         await gallery.save();
 
@@ -48,10 +47,9 @@ export default class GalleryController {
 
   static async all(req: Request, res: Response) {
     try {
-      const sessionId = res.locals.users["_id"];
-      const invitation = await Invitation.findOne({user: sessionId}).select("_id");
+      const session = res.locals.users;
 
-      const gallery = await Gallery.find({invitation: invitation!["_id"]});
+      const gallery = await Gallery.find({invitation: session["invitation"]});
 
       res.status(200).json({
         status: "success",
@@ -64,14 +62,13 @@ export default class GalleryController {
 
   static async delete(req: Request, res: Response) {
     try {
-      const { id } = req.body as {id: ObjectId};
+      const { id } = req.params;
 
       if (!id) return ErrorResponse.BAD_REQUEST(res, "id is empty");
 
-      const sessionId = res.locals.users["_id"];
-      const invitation = await Invitation.findOne({user: sessionId}).select("_id");
+      const session = res.locals.users;
       
-      const gallery = await Gallery.findOne({_id: id, invitation: invitation!["_id"]});
+      const gallery = await Gallery.findOne({_id: id, invitation: session["invitation"]});
       if (!gallery) return ErrorResponse.BAD_REQUEST(res, "id not found");
 
       try {

@@ -5,7 +5,6 @@ export const uploadContent = (value: string) => {
   if(value === undefined || value?.trim()?.length < 1) return Promise.reject("content is empty");
 
   const base64decode = Buffer.byteLength(value.split('base64,')[1], 'base64');
-  console.log((base64decode / 1000));
   
   if ((base64decode / 1000) > Config.maxImageSize) {
     return Promise.reject(`maximum content size is ${Config.maxImageSize}KB`);

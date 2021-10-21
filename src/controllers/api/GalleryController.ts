@@ -45,6 +45,24 @@ export default class GalleryController {
     }
   }
 
+  static async index(req: Request, res: Response) {
+    try {
+      const { slug } = req.params;
+
+      const invitation = await Invitation.findOne({ web_url: slug });
+      if (!invitation) return ErrorResponse.NOT_FOUND(res, "invitation not found");
+
+      const gallery = await Gallery.find({invitation: invitation["_id"]});
+
+      res.status(200).json({
+        status: "success",
+        data: gallery
+      })
+    } catch(err: any) {
+      ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
+    }
+  }
+
   static async all(req: Request, res: Response) {
     try {
       const session = res.locals.users;

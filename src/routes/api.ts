@@ -5,7 +5,6 @@ import AuthController from "../controllers/api/AuthController";
 import authCheck from "../middlewares/authCheck";
 import UserController from "../controllers/api/UserController";
 import updateUser from "../middlewares/validations/updateUser";
-import registeredInvitation from "../middlewares/validations/completedAccount";
 import { body } from "express-validator";
 import WeddingDateController from "../controllers/api/WeddingDateController";
 import { uploadContent, uploadPictureField } from "../middlewares/validations/imageUpload";
@@ -18,6 +17,7 @@ import invitationUpdate from "../middlewares/validations/invitationUpdate";
 const router = Router();
 
 router
+  .get("/invitations/:slug", InvitationController.index)
   .get('/invitations', authCheck, userStatusCheck, InvitationController.show)
   .put("/invitations", authCheck, userStatusCheck, invitationUpdate, InvitationController.update)
   .put(
@@ -34,11 +34,18 @@ router
     userStatusCheck,
     body('field').custom(uploadPictureField),
     InvitationController.imagesDelete
-  )
+  );
+
+router
+  .get("/invitations/:slug/wedding-dates", WeddingDateController.index)
   .post("/invitations/wedding-dates", authCheck, userStatusCheck, WeddingDateController.create)
   .get("/invitations/wedding-dates", authCheck, userStatusCheck, WeddingDateController.all)
   .put("/invitations/wedding-dates/:id", authCheck, userStatusCheck, WeddingDateController.update)
-  .delete("/invitations/wedding-dates/:id", authCheck, userStatusCheck, WeddingDateController.delete)
+  .delete("/invitations/wedding-dates/:id", authCheck, userStatusCheck, WeddingDateController.delete);
+
+router
+  .get("/invitations/:slug/galleries", GalleryController.index)
+  .get("/invitations/galleries", authCheck, userStatusCheck, GalleryController.all)
   .post(
     "/invitations/galleries", 
     authCheck, 
@@ -46,7 +53,6 @@ router
     body('content').custom(uploadContent), 
     GalleryController.create
   )
-  .get("/invitations/galleries", authCheck, userStatusCheck, GalleryController.all)
   .delete("/invitations/galleries/:id", authCheck, userStatusCheck, GalleryController.delete);
   //   .put("/invitations/active", authCheck, InvitationController.status)
 

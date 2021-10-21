@@ -1,9 +1,28 @@
 import { Request, Response } from "express";
 import { IWeddingDateUpdate } from "../../interfaces";
+import Invitation from "../../models/Invitation";
 import WeddingDate from "../../models/WeddingDate";
 import { ErrorResponse } from "../../utils/ErrorResponse";
 
 export default class WeddingDateController {
+  static async index(req: Request, res: Response) {
+    try {
+      const { slug } = req.params;
+
+      const invitation = await Invitation.findOne({ web_url: slug });
+      if (!invitation) return ErrorResponse.NOT_FOUND(res, "invitation not found");
+
+      const weddingdate = await WeddingDate.find({invitation: invitation["_id"]});
+
+      res.status(200).json({
+        status: "success",
+        data: weddingdate
+      })
+    } catch(err: any) {
+      ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
+    }
+  }
+
   static async all(req: Request, res: Response) {
     try {
       const session = res.locals.users;

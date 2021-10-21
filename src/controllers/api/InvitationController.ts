@@ -13,6 +13,9 @@ import { ObjectId } from "mongoose";
 import User from "../../models/User";
 import { dateNow, nextDayTime } from "../../utils/DateTime";
 import Config from "../../config";
+import Gallery from "../../models/Gallery";
+import WeddingDate from "../../models/WeddingDate";
+import Guestbook from "../../models/Guestbook";
 
 export default class InvitationController {
   static async show(req: Request, res: Response) {
@@ -25,6 +28,23 @@ export default class InvitationController {
         status: "success",
         data: invitation,
       });
+    } catch(err: any) {
+      ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
+    }
+  }
+
+  static async index(req: Request, res: Response) {
+    try {
+      const { slug } = req.params;
+
+      const invitation = await Invitation.findOne({ web_url: slug });
+
+      if (!invitation) return ErrorResponse.NOT_FOUND(res, "not found");
+
+      res.status(200).json({
+        status: "success",
+        data: invitation
+      })
     } catch(err: any) {
       ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
     }

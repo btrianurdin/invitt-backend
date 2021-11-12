@@ -14,7 +14,7 @@ const updateUser = checkSchema({
     custom: {
       errorMessage: "gender is not valid",
       options: (value: string) => {
-        const gender = ["man", "women", "none"];
+        const gender = ["man", "woman", "none"];
         if (gender.includes(value)) return true;
         return false;
       }

@@ -5,7 +5,7 @@ import AuthController from "../controllers/api/AuthController";
 import authCheck from "../middlewares/authCheck";
 import UserController from "../controllers/api/UserController";
 import updateUser from "../middlewares/validations/updateUser";
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import WeddingDateController from "../controllers/api/WeddingDateController";
 import { uploadContent, uploadPictureField } from "../middlewares/validations/imageUpload";
 import GalleryController from "../controllers/api/GalleryController";
@@ -72,7 +72,8 @@ router
   .post("/auth/login", AuthController.login)
   .post("/auth/is-auth", authCheck, AuthController.isAuth)
   .post("/auth/forgot-password", AuthController.forgotPassword)
-  .post("/auth/reset-password", AuthController.resetPassword);
+  .get("/auth/reset-password/:token", AuthController.resetPasswordToken)
+  .post("/auth/reset-password/:token", AuthController.resetPassword);
 
 router
   .get('/users', authCheck, userStatusCheck, UserController.show)

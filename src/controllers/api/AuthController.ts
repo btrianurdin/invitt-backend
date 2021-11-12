@@ -166,9 +166,28 @@ export default class AuthController {
     }
   }
 
+  static async resetPasswordToken(req: Request, res: Response) {
+    try {
+      const { token } = req.params;
+
+      const getToken = await Token.findOne({ token });
+
+      if (!getToken) return ErrorResponse.BAD_REQUEST(res, "token not found");
+      if (timeNow() > getToken.expired) return ErrorResponse.BAD_REQUEST(res, "token expired");
+
+      res.status(200).json({
+        status: "success",
+        data: {},
+      })
+    } catch(err: any) {
+      ErrorResponse.INTERNAL_SERVER_ERROR(res, err?.message);
+    }
+  }
+
   static async resetPassword(req: Request, res: Response) {
     try {
-      const { token, newPassword } = req.body;
+      const { newPassword } = req.body;
+      const { token } = req.params;
 
       const getToken = await Token.findOne({ token });
 

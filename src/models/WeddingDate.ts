@@ -4,6 +4,7 @@ export interface IWeddingDateModel extends Document {
   invitation: Schema.Types.ObjectId;
   place_name: string;
   date: Date;
+  title: String;
   location: String;
   longitude: String;
   latitude: String;
@@ -18,6 +19,7 @@ const WeddingDateSchema = new Schema(
     },
     place_name: String,
     date: Date,
+    title: String,
     location: String,
     longitude: String,
     latitude: String,

@@ -17,6 +17,26 @@ import invitationUpdate from "../middlewares/validations/invitationUpdate";
 const router = Router();
 
 router
+  .get("/invitations/wedding-dates", authCheck, userStatusCheck, WeddingDateController.all)
+  .get("/invitations/:slug/wedding-dates", WeddingDateController.index)
+  .post("/invitations/wedding-dates", authCheck, userStatusCheck, WeddingDateController.create)
+  .put("/invitations/wedding-dates/:id", authCheck, userStatusCheck, WeddingDateController.update)
+  .delete("/invitations/wedding-dates/:id", authCheck, userStatusCheck, WeddingDateController.delete);
+
+router
+  .get("/invitations/:slug/galleries", GalleryController.index)
+  .get("/invitations/galleries", authCheck, userStatusCheck, GalleryController.all)
+  .post(
+    "/invitations/galleries", 
+    authCheck, 
+    userStatusCheck,
+    body('content').custom(uploadContent), 
+    GalleryController.create
+  )
+  .delete("/invitations/galleries/:id", authCheck, userStatusCheck, GalleryController.delete);
+  //   .put("/invitations/active", authCheck, InvitationController.status)
+
+router
   .get("/invitations/:slug", InvitationController.index)
   .get('/invitations', authCheck, userStatusCheck, InvitationController.show)
   .put("/invitations", authCheck, userStatusCheck, invitationUpdate, InvitationController.update)
@@ -35,26 +55,6 @@ router
     body('field').custom(uploadPictureField),
     InvitationController.imagesDelete
   );
-
-router
-  .get("/invitations/:slug/wedding-dates", WeddingDateController.index)
-  .post("/invitations/wedding-dates", authCheck, userStatusCheck, WeddingDateController.create)
-  .get("/invitations/wedding-dates", authCheck, userStatusCheck, WeddingDateController.all)
-  .put("/invitations/wedding-dates/:id", authCheck, userStatusCheck, WeddingDateController.update)
-  .delete("/invitations/wedding-dates/:id", authCheck, userStatusCheck, WeddingDateController.delete);
-
-router
-  .get("/invitations/:slug/galleries", GalleryController.index)
-  .get("/invitations/galleries", authCheck, userStatusCheck, GalleryController.all)
-  .post(
-    "/invitations/galleries", 
-    authCheck, 
-    userStatusCheck,
-    body('content').custom(uploadContent), 
-    GalleryController.create
-  )
-  .delete("/invitations/galleries/:id", authCheck, userStatusCheck, GalleryController.delete);
-  //   .put("/invitations/active", authCheck, InvitationController.status)
 
 router
   .post(

@@ -1,45 +1,41 @@
-# New KBBI API (Scraper)
-Rest API untuk Kamus Besar Bahasa Indonesia (KBBI) yang bangun dengan NodeJS, Cheerio dan Typescript. 
+## Invitation Website: Invitt Frontend
+Invitt is a simple invitation website for wedding event. Invitt offers easy and fast creation of an invitation website. Invitt provides templates that can be directly used by user.
 
-Api ini dilengkapi dengan **Lema**, **Kelas Kata**, dan **Deskripsi (arti)**.
+**Repository**:
+- Backend: [https://github.com/btrianurdin/invitt-backend/](https://github.com/btrianurdin/invitt-backend/)
+- Frontend: [https://github.com/btrianurdin/invitt/](https://github.com/btrianurdin/invitt/)
+
+**Backend Library and Framework**:
+- [x] Built with Express and NodeJS
+- [x] Full Typescipt
+- [x] Authentication with JWT (sign in and sign up)
+- [x] Database MongoDB
+- [x] Reset Password send via email with [nodemailer](https://nodemailer.com/)
+- [x] Upload image to Cloudinary
+- [x] Backend Validation with Express Validator
+- [x] Nodemon for development
+
+**Environment Variabel**:
+| Name | Required | Description |
+| ---- | -------- | ----------- |
+| NODE_ENV | Yes | nodejs environment |
+| PORT | Yes | Port of node js app |
+| BASE_URL | Yes | url of your website |
+| API_PREFIX | Yes | prefix api. ex: yourwebiste[.]com/api/route |
+| DB_SERVER_URL | Yes | mongodb connector url |
+| JWT_TOKEN | Yes | your jwt token (jwt key) |
+| CLOUDINARY_NAME | Yes | your cloudinary name for upload image |
+| CLOUDINARY_API_KEY | Yes | cloudinary api key |
+| CLOUDINARY_API_SECRET | Yes | cloudinary api secret key |
+| MAX_IMAGE_SIZE | Yes | maximum size of image a user can upload |
+| TIME_ZONE | Yes | time zone |
+| MAIL_HOST | Yes | your mail host. Used for reset password. |
+| MAIL_USER | Yes | your mail username |
+| MAIL_PASS | Yes | your mail password |
 
 
-## Dokumentasi
-**Base Url** : 
-```
-https://new-kbbi-api.herokuapp.com
-``` 
-**Endpoint** : 
-```
-/cari/[kosa kata]
-```
+*note:*
+- *Invitt may not be ready for production*
+- *Backend documentation will be published soon*
 
-### Pengunaan
-- Contoh *Request*
-  ```
-    GET https://new-kbbi-api.herokuapp.com/cari/demokrasi
-  ```
-- Contoh *Response*
-  ```json
-  {
-    "status": true,
-    "message": "success",
-    "data": [
-      {
-        "lema": "de.mo.kra.si /démokrasi/",
-        "arti": [
-          {
-            "kelas_kata": "n[Nomina: kata benda] Pol[Politik dan Pemerintahan: -]",
-            "deskripsi": "(bentuk atau sistem) pemerintahan yang seluruh rakyatnya turut serta memerintah dengan perantaraan wakilnya; pemerintahan rakyat"
-          },
-          {
-            "kelas_kata": "n[Nomina: kata benda] Pol[Politik dan Pemerintahan: -]",
-            "deskripsi":"gagasan atau pandangan hidup yang mengutamakan persamaan hak dan kewajiban serta perlakuan yang sama bagi semua warga negara"
-          }
-        ]
-      }
-    ]
-  }
-  ```
----
-Di bangun dengan ❤️ oleh [@btrianurdin](https://twitter.com/btrianurdin)
+**Happy coding for you guys ❤️**
